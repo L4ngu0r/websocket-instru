@@ -31,8 +31,13 @@ const logger = createLogger({
 const wss = new WebSocket.Server({ port: 9000, path: '/instru' })
 
 wss.on('connection', (ws) => {
-  ws.on('message', (message) => {
-    logger.log('info', message)
+  ws.on('message', (msgString) => {
+    const message = JSON.parse(msgString)
+    if (message.type === 'error') {
+      logger.log('error', message.content)
+    } else {
+      logger.log('info', JSON.stringify(message.content))
+    }
   })
 
   ws.send('[WS] connection open')
